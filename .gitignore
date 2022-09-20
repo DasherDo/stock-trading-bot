@@ -16,6 +16,12 @@
 # Optional eslint cache
 .eslintcache
 
+~/node_modules/
+*/node_modules/
+
+*/package-lock
+~/package-lock
+
 
 # Logs
 logs
