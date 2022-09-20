@@ -19,8 +19,8 @@
 ~/node_modules/
 */node_modules/
 
-*/package-lock
-~/package-lock
+*/package-lock.json
+~/package-lock.json
 
 
 # Logs
