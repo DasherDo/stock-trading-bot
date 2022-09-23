@@ -37,20 +37,37 @@ const initialValues = async (symbol) => {
 			priceElement
 		);
 		await page.goto(pastURL, { timeout: 180000 });
-		const d5 = [];
+		// const d5Element = await page.evaluate(() => {
+		// 	let data = [];
+		// 	let elements = document.getElementsByClassName(
+		// 		'Py(10px) Pstart(10px)'
+		// 	);
+		// 	for (var element of elements) data.push(element.textContent);
+		// 	return data;
+		// });
+		// console.log(d5Element);
+		const history = await page.$$eval('tr', (els) =>
+			els
+				.slice(2)
+				.map((el) =>
+					[...el.querySelectorAll('td')].map((e) =>
+						e.textContent.trim()
+					)
+				)
+				.slice(0, 5)
+		);
+		history.forEach((item) => {
+			item.splice(1, 4);
+			item.pop();
+		});
 		// const dElement = await page.waitForXPath(
 		// 	`//*[@id="Col1-1-HistoricalDataTable-Proxy"]/section/div[2]/table/tbody/tr[${i}]/td[5]`
 		// );
-		const d = await page.evaluate(
-			(element) => element.textContent,
-			dElement
-		);
-		console.log(d);
 		const stock = {
 			price: price,
 			prevClosePrice: prevClosePrice,
 			openPrice: openPrice,
-			d5: d5,
+			history: history,
 		};
 		stocks = { ...stocks, [symbol]: stock };
 		return false;
@@ -63,7 +80,9 @@ const getStocks = async (...args) => {
 	for (const url of args) {
 		await initialValues(url);
 	}
-	console.log(stocks);
+	console.log(stocks['AAPL']['history']);
 };
 
-getStocks('AAPL', 'TSLA', 'GOOGL');
+// getStocks('AAPL', 'TSLA', 'GOOGL');
+
+getStocks('AAPL');
