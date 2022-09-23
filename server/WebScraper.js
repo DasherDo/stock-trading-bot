@@ -1,5 +1,6 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
+const util = require('util');
 
 const AAPL = process.env.AAPL;
 const TSLA = process.env.TSLA;
@@ -46,7 +47,7 @@ const initialValues = async (symbol) => {
 		// 	return data;
 		// });
 		// console.log(d5Element);
-		const history = await page.$$eval('tr', (els) =>
+		let history = await page.$$eval('tr', (els) =>
 			els
 				.slice(2)
 				.map((el) =>
@@ -63,6 +64,7 @@ const initialValues = async (symbol) => {
 		// const dElement = await page.waitForXPath(
 		// 	`//*[@id="Col1-1-HistoricalDataTable-Proxy"]/section/div[2]/table/tbody/tr[${i}]/td[5]`
 		// );
+		history = Object.fromEntries(history);
 		const stock = {
 			price: price,
 			prevClosePrice: prevClosePrice,
@@ -80,7 +82,7 @@ const getStocks = async (...args) => {
 	for (const url of args) {
 		await initialValues(url);
 	}
-	console.log(stocks['AAPL']['history']);
+	console.log(util.inspect(stocks, false, null, true));
 };
 
 // getStocks('AAPL', 'TSLA', 'GOOGL');
