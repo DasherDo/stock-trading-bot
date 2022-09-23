@@ -21,6 +21,9 @@
 
 */package-lock.json
 ~/package-lock.json
+/package-lock.json
+*/server/package-lock
+package-lock.json
 
 
 # Logs
