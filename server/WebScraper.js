@@ -6,7 +6,7 @@ const AAPL = process.env.AAPL;
 const TSLA = process.env.TSLA;
 const URL = process.env.URL;
 const INTERVAL = 60 * 1000;
-let stocks = {};
+// let stocks = {};
 
 const initialValues = async (symbol) => {
 	console.log(`Working on ${symbol}`);
@@ -61,30 +61,34 @@ const initialValues = async (symbol) => {
 			item.splice(1, 4);
 			item.pop();
 		});
+		history.reverse();
 		// const dElement = await page.waitForXPath(
 		// 	`//*[@id="Col1-1-HistoricalDataTable-Proxy"]/section/div[2]/table/tbody/tr[${i}]/td[5]`
 		// );
 		history = Object.fromEntries(history);
 		const stock = {
+			symbol: symbol,
 			price: price,
 			prevClosePrice: prevClosePrice,
 			openPrice: openPrice,
 			history: history,
 		};
-		stocks = { ...stocks, [symbol]: stock };
-		return false;
+		// stocks = { ...stocks, [symbol]: stock };
+		return stock;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
 const getStocks = async (...args) => {
+	let stocks = [];
 	for (const url of args) {
-		await initialValues(url);
+		const stock = await initialValues(url);
+		stocks.push(stock); // = { ...stocks, [url]: stock };
 	}
-	console.log(util.inspect(stocks, false, null, true));
+	return stocks;
 };
 
 // getStocks('AAPL', 'TSLA', 'GOOGL');
 
-getStocks('AAPL');
+module.exports = { getStocks };

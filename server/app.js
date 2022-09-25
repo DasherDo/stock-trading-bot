@@ -6,7 +6,7 @@ var logger = require('morgan');
 const cors = require('cors');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var stockRouter = require('./routes/stocks');
 
 var app = express();
 
@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/stocks', stockRouter);
 
 const server = app.listen(5000, () => {
 	console.log('Server started on Port 5000');
@@ -37,7 +37,7 @@ app.use(function (err, req, res, next) {
 
 	// render the error page
 	res.status(err.status || 500);
-	res.render('error');
+	res.json({ error: err });
 });
 
 module.exports = app;
