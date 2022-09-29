@@ -18,6 +18,7 @@ function Search() {
 		if (data.status === true) {
 			console.log(data.data[0]);
 			setStock(data.data[0]);
+			setSymbol('');
 		}
 	};
 

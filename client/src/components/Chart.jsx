@@ -10,6 +10,7 @@ import {
 	Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import '../App.css';
 
 function Chart(stock) {
 	ChartJS.register(
@@ -65,6 +66,7 @@ function Chart(stock) {
 				options={options}
 				data={data}
 				key={stock.symbol}
+				className='chart'
 			/>
 		);
 	};
