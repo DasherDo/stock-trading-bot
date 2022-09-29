@@ -1,5 +1,4 @@
-import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -11,9 +10,8 @@ import {
 	Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import axios from 'axios';
 
-function App() {
+function Chart(stock) {
 	ChartJS.register(
 		CategoryScale,
 		LinearScale,
@@ -24,18 +22,7 @@ function App() {
 		Legend
 	);
 
-	const [stocks, setStocks] = useState();
-
-	const getData = async () => {
-		const data = await axios.get('http://localhost:5000/stocks');
-		setStocks(data.data.data);
-	};
-
-	useEffect(() => {
-		getData();
-	}, []);
-
-	const makeChart = (stock) => {
+	const makeChart = ({ stock }) => {
 		const history = stock['history'];
 
 		const options = {
@@ -82,17 +69,7 @@ function App() {
 		);
 	};
 
-	return (
-		<div className='App'>
-			{stocks ? (
-				stocks.map((item) => {
-					return makeChart(item);
-				})
-			) : (
-				<div> Loading . . .</div>
-			)}
-		</div>
-	);
+	return <div>{makeChart(stock)}</div>;
 }
 
-export default App;
+export default Chart;
