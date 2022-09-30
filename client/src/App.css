@@ -22,11 +22,43 @@ body {
 .link {
 	background-color: black;
 	color: white;
-	text-decoration: none;
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
 	margin: 0;
 	height: 40px;
 	padding: 0;
+}
+
+.link > * {
+	color: white;
+}
+
+.search {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+	/* height: 60vh; */
+}
+
+.search-form > * {
+	padding: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.search-form > input{
+	margin-bottom: 10px;
+	width: 30vw;
+	height: 30px;
+	border-radius: 5px;
+	border: 1px solid black;
+}
+
+.search-form > button {
+	width: 30vw + 1px;
+	height: 32px;
+	border-radius: 5px;
+	border: 1px solid black;
 }
