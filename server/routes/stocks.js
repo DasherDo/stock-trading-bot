@@ -13,6 +13,7 @@ router.get('/', async function (req, res, next) {
 });
 
 router.post('/search', async (req, res, next) => {
+	console.log(req.body.symbol);
 	const data = await getStocks(req.body.symbol);
 	try {
 		if (data) {

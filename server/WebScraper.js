@@ -2,8 +2,6 @@ require('dotenv').config();
 const puppeteer = require('puppeteer');
 const util = require('util');
 
-const AAPL = process.env.AAPL;
-const TSLA = process.env.TSLA;
 const URL = process.env.URL;
 const INTERVAL = 60 * 1000;
 // let stocks = {};
@@ -82,9 +80,16 @@ const initialValues = async (symbol) => {
 
 const getStocks = async (...args) => {
 	let stocks = [];
-	for (const url of args) {
-		const stock = await initialValues(url);
-		stocks.push(stock); // = { ...stocks, [url]: stock };
+	if (args.length === 1) {
+		for (const url of args[0]) {
+			const stock = await initialValues(url);
+			stocks.push(stock); // = { ...stocks, [url]: stock };
+		}
+	} else {
+		for (const url of args) {
+			const stock = await initialValues(url);
+			stocks.push(stock); // = { ...stocks, [url]: stock };
+		}
 	}
 	return stocks;
 };

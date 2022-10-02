@@ -62,3 +62,50 @@ body {
 	border-radius: 5px;
 	border: 1px solid black;
 }
+
+.history {
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+	position: relative;
+	height: 610px;
+	width: 200px;
+	border: 1px solid black;
+	padding: 20px;
+	text-align: center;
+}
+
+.list::-webkit-scrollbar {
+	display: none;
+}
+
+.list {
+	height: 400px;
+	overflow: auto;
+}
+
+.list > *{
+	margin: 3px;
+}
+
+#history-title {
+	position: relative;
+	margin-bottom: 10px;
+	text-decoration: underline;
+
+}
+
+.main {
+	display: flex;
+	flex-direction: row;
+	margin: 10px;
+}
+.charts {
+	width: 80vw;
+	height: 680px;
+	overflow: auto;
+}
+
+.charts::-webkit-scrollbar {
+	display: none;
+}

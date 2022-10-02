@@ -12,7 +12,7 @@ function Main() {
 		setStocks(data.data.data);
 	};
 
-	// Commented out for development
+	//Commented out for development
 	// useEffect(() => {
 	// 	getData();
 	// }, []);

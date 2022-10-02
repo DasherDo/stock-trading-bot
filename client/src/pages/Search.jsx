@@ -10,9 +10,10 @@ function Search() {
 	const [balance, setBalance] = useState(
 		localStorage.getItem('user-balance')
 	);
+
 	const [ownedStocks, setOwnedStocks] = useState(
 		localStorage.getItem('user-stocks')
-			? [localStorage.getItem('user-stocks')]
+			? JSON.parse(localStorage.getItem('user-stocks'))
 			: []
 	);
 
@@ -25,8 +26,8 @@ function Search() {
 			}
 		);
 		if (data.status === true) {
-			console.log(data.data[0]);
-			setStock(data.data[0]);
+			console.log(data.data);
+			setStock(data.data);
 			setSymbol('');
 		}
 	};
@@ -56,20 +57,35 @@ function Search() {
 					(parseFloat(balance) - parseFloat(stock.price)).toFixed(2)
 				)
 			);
-
-			setOwnedStocks([
-				...ownedStocks,
-				{
-					symbol: stock.symbol,
-					boughtPrice: stock.price,
-					timestamp: datetime,
-				},
-			]);
-
+			let stocks = ownedStocks;
+			const stockInfo = { boughtPrice: stock.price, timestamp: datetime };
+			if (stock.symbol in stocks) {
+				stocks[stock.symbol].push(stockInfo);
+			} else {
+				stocks = { ...stocks, [stock.symbol]: [stockInfo] };
+			}
+			setOwnedStocks(stocks);
 			localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
 			return;
 		}
 		alert('You do not have the required funds.');
+	};
+
+	const sellStock = () => {
+		if (stock.symbol in ownedStocks) {
+			ownedStocks[stock.symbol].pop(0);
+			if (ownedStocks[stock.symbol].length === 0) {
+				delete ownedStocks[stock.symbol];
+			}
+		}
+		setBalance(
+			parseFloat(
+				parseFloat(balance) + parseFloat(stock.price).toFixed(2)
+			).toFixed(2)
+		);
+		localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
+		console.log(balance);
+		console.log(ownedStocks);
 	};
 
 	return (
@@ -89,8 +105,16 @@ function Search() {
 				</form>
 			</div>
 			<button onClick={() => buyStock()}>Buy</button>
+			<button onClick={() => sellStock()}>Sell</button>
 			{balance}
-			{stock ? <Chart stock={stock} /> : <div></div>}
+			{stock ? (
+				stock.map((item) => {
+					console.log(item);
+					return <Chart stock={item} />;
+				})
+			) : (
+				<div></div>
+			)}
 		</div>
 	);
 }
