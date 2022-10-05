@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
@@ -6,11 +7,11 @@ import '../App.css';
 
 function Search() {
 	const [stock, setStock] = useState();
-	const [symbol, setSymbol] = useState('');
+	const { searchSymbol } = useLocation().state;
+	const [symbol, setSymbol] = useState(searchSymbol ? searchSymbol : '');
 	const [balance, setBalance] = useState(
 		localStorage.getItem('user-balance')
 	);
-
 	const [ownedStocks, setOwnedStocks] = useState(
 		localStorage.getItem('user-stocks')
 			? JSON.parse(localStorage.getItem('user-stocks'))
@@ -18,7 +19,9 @@ function Search() {
 	);
 
 	const getStock = async (e) => {
-		e.preventDefault();
+		if (e) {
+			e.preventDefault();
+		}
 		const { data } = await axios.post(
 			'http://localhost:5000/stocks/search',
 			{
@@ -26,11 +29,15 @@ function Search() {
 			}
 		);
 		if (data.status === true) {
-			console.log(data.data);
-			setStock(data.data);
+			console.log(data.data[0]);
+			setStock(data.data[0]);
 			setSymbol('');
 		}
 	};
+
+	if (searchSymbol) {
+		getStock();
+	}
 
 	useEffect(() => {
 		localStorage.setItem('user-balance', balance);
@@ -107,14 +114,7 @@ function Search() {
 			<button onClick={() => buyStock()}>Buy</button>
 			<button onClick={() => sellStock()}>Sell</button>
 			{balance}
-			{stock ? (
-				stock.map((item) => {
-					console.log(item);
-					return <Chart stock={item} />;
-				})
-			) : (
-				<div></div>
-			)}
+			{stock ? <Chart stock={stock} /> : <div></div>}
 		</div>
 	);
 }

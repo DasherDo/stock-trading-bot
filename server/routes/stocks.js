@@ -5,7 +5,7 @@ const { getStocks } = require('../WebScraper');
 
 /* GET stocks listing. */
 router.get('/', async function (req, res, next) {
-	const data = await getStocks('AAPL', 'TSLA');
+	const data = await getStocks(['AAPL', 'TSLA', 'GOOGL', 'DIS']);
 	console.log(`The data is ${JSON.stringify(data)}`);
 	if (data) {
 		return res.json({ data });
@@ -14,7 +14,7 @@ router.get('/', async function (req, res, next) {
 
 router.post('/search', async (req, res, next) => {
 	console.log(req.body.symbol);
-	const data = await getStocks(req.body.symbol);
+	const data = await getStocks([req.body.symbol]);
 	try {
 		if (data) {
 			return res.json({ data, status: true });

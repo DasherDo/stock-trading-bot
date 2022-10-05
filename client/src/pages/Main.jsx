@@ -1,39 +1,52 @@
 import '../App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
+import { useEffect } from 'react';
 
 function Main() {
-	const [stocks, setStocks] = useState();
+	const [stocks, setStocks] = useState(
+		sessionStorage.getItem('main-stocks')
+			? JSON.parse(sessionStorage.getItem('main-stocks'))
+			: null
+	);
 
 	const getData = async () => {
-		const data = await axios.get('http://localhost:5000/stocks');
-		setStocks(data.data.data);
+		if (stocks === null) {
+			const data = await axios.get('http://localhost:5000/stocks');
+			setStocks(data.data.data);
+			sessionStorage.setItem(
+				'main-stocks',
+				JSON.stringify(data.data.data)
+			);
+		}
+		return;
 	};
 
-	//Commented out for development
-	// useEffect(() => {
-	// 	getData();
-	// }, []);
+	useEffect(() => {
+		getData();
+	}, []);
 
 	return (
 		<div className='App'>
-			<Navbar />
-			{/* {stocks ? (
-				stocks.map((item) => {
-					return makeChart(item);
-				})
-			) : (
-				<div> Loading . . .</div>
-			)} */}
-			{stocks ? (
-				stocks.map((item) => {
-					return <Chart stock={item} />;
-				})
-			) : (
-				<div>Loading . . .</div>
-			)}
+			<Navbar
+				balance={JSON.parse(localStorage.getItem('user-balance'))}
+			/>
+			<div className='stock-container'>
+				{stocks ? (
+					stocks.map((item) => {
+						return (
+							<Chart
+								stock={item}
+								clickable={true}
+							/>
+						);
+					})
+				) : (
+					<div>Loading . . .</div>
+				)}
+			</div>
 		</div>
 	);
 }

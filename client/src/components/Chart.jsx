@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import '../App.css';
+import { useNavigate } from 'react-router-dom';
 
 function Chart(stock) {
 	ChartJS.register(
@@ -23,7 +24,13 @@ function Chart(stock) {
 		Legend
 	);
 
-	const makeChart = ({ stock }) => {
+	const naviagte = useNavigate();
+
+	const search = (symbol) => {
+		naviagte('/search', { state: { searchSymbol: symbol } });
+	};
+
+	const makeChart = ({ stock, clickable = false }) => {
 		const history = stock['history'];
 
 		const options = {
@@ -61,13 +68,26 @@ function Chart(stock) {
 			],
 		};
 
+		if (!clickable) {
+			return (
+				<Line
+					options={options}
+					data={data}
+					key={stock.symbol}
+					className='chart'
+				/>
+			);
+		}
+
 		return (
-			<Line
-				options={options}
-				data={data}
-				key={stock.symbol}
-				className='chart'
-			/>
+			<div>
+				<Line
+					options={options}
+					data={data}
+					key={stock.symbol}
+					className='chart'
+					onClick={() => search(stock.symbol)}></Line>
+			</div>
 		);
 	};
 
