@@ -48,7 +48,7 @@ function Portfolio() {
 				value.map((item) => {
 					return (
 						<div key={item.timestamp}>
-							{key} bought at {item.boughtPrice}
+							{key} bought at {item.boughtPrice}$
 						</div>
 					);
 				})

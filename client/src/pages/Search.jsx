@@ -7,7 +7,7 @@ import '../App.css';
 
 function Search() {
 	const [stock, setStock] = useState();
-	const { searchSymbol } = useLocation().state;
+	const searchSymbol = useLocation().state?.searchSymbol;
 	const [symbol, setSymbol] = useState(searchSymbol ? searchSymbol : '');
 	const [balance, setBalance] = useState(
 		localStorage.getItem('user-balance')
@@ -16,6 +16,11 @@ function Search() {
 		localStorage.getItem('user-stocks')
 			? JSON.parse(localStorage.getItem('user-stocks'))
 			: []
+	);
+	const [stocks, setStocks] = useState(
+		sessionStorage.getItem('main-stocks')
+			? JSON.parse(sessionStorage.getItem('main-stocks'))
+			: null
 	);
 
 	const getStock = async (e) => {
@@ -35,7 +40,12 @@ function Search() {
 		}
 	};
 
+	// Need to memoize stock charts in search
 	if (searchSymbol) {
+		if (searchSymbol in stocks) {
+			setStock(stocks[searchSymbol]);
+		}
+
 		getStock();
 	}
 

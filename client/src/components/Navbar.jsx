@@ -7,7 +7,11 @@ function Navbar({ balance }) {
 	return (
 		<div className='link'>
 			<Link to='/'>Home</Link>
-			<Link to='/search'>Search</Link>
+			<Link
+				to='/search'
+				state={{ searchSymbol: '' }}>
+				Search
+			</Link>
 			<Link to='/portfolio'>Profile</Link>
 			Balance: {formatMoney(balance, '$')}
 		</div>
