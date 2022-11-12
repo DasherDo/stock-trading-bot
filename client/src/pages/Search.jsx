@@ -15,7 +15,7 @@ function Search() {
 	const [ownedStocks, setOwnedStocks] = useState(
 		localStorage.getItem('user-stocks')
 			? JSON.parse(localStorage.getItem('user-stocks'))
-			: []
+			: {}
 	);
 	const [stocks, setStocks] = useState(
 		sessionStorage.getItem('main-stocks')
@@ -41,13 +41,16 @@ function Search() {
 	};
 
 	// Need to memoize stock charts in search
-	if (searchSymbol) {
-		if (searchSymbol in stocks) {
-			setStock(stocks[searchSymbol]);
-		}
 
-		getStock();
-	}
+	useEffect(() => {
+		if (searchSymbol) {
+			if (searchSymbol in stocks) {
+				setStock(stocks[searchSymbol]);
+			}
+
+			getStock();
+		}
+	}, []);
 
 	useEffect(() => {
 		localStorage.setItem('user-balance', balance);
@@ -94,15 +97,15 @@ function Search() {
 			if (ownedStocks[stock.symbol].length === 0) {
 				delete ownedStocks[stock.symbol];
 			}
+			setBalance(
+				parseFloat(
+					parseFloat(balance) + parseFloat(stock.price)
+				).toFixed(2)
+			);
+			localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
+		} else {
+			alert('You do not own any of this stock.');
 		}
-		setBalance(
-			parseFloat(
-				parseFloat(balance) + parseFloat(stock.price).toFixed(2)
-			).toFixed(2)
-		);
-		localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
-		console.log(balance);
-		console.log(ownedStocks);
 	};
 
 	return (
@@ -124,6 +127,7 @@ function Search() {
 			<button onClick={() => buyStock()}>Buy</button>
 			<button onClick={() => sellStock()}>Sell</button>
 			{balance}
+			<button onClick={() => test()}>Test</button>
 			{stock ? <Chart stock={stock} /> : <div></div>}
 		</div>
 	);
