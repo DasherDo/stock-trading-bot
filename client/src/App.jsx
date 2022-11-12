@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './pages/Main';
 import Search from './pages/Search';
 import Portfolio from './pages/Portfolio';
+import Register from './pages/Register';
+import Login from './pages/Login';
 
 function App() {
 	return (
@@ -20,6 +22,14 @@ function App() {
 					<Route
 						path='/portfolio'
 						element={<Portfolio />}
+					/>
+					<Route
+						path='/login'
+						element={<Login />}
+					/>
+					<Route
+						path='/register'
+						element={<Register />}
 					/>
 				</Routes>
 			</BrowserRouter>
