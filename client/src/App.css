@@ -10,7 +10,7 @@ body {
 }
 
 .App {
-
+	height: 100%;
 	width: 100%;
 }
 
@@ -116,4 +116,24 @@ body {
 	display: grid;	
 	grid-template-columns: 50vw 50vw;
 	grid-template-rows: 420px 420px;
+}
+
+.login {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.login > .form {
+	display: flex;
+	flex-direction: column;
+}
+
+.form > * {
+	padding: 10px;
+	width: 200px;
+	margin: 20px;
+	text-align: center;
 }
