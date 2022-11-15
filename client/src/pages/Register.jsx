@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { registerRoute } from '../utils/apiRoutes';
 
 function Register() {
 	const navigate = useNavigate();
@@ -28,23 +29,23 @@ function Register() {
 		}
 	}, [navigate]);
 
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	if (handleValidation()) {
-	// 		const { username, password } = userInfo;
-	// 		const { data } = await axios.post(registerRoute, {
-	// 			username,
-	// 			password,
-	// 		});
-	// 		if (data.status === false) {
-	// 			toast.error(data.msg, toastStyle);
-	// 		}
-	// 		if (data.status === true) {
-	// 			localStorage.setItem('user', JSON.stringify(data.user));
-	// 			navigate('/');
-	// 		}
-	// 	}
-	// };
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (handleValidation()) {
+			const { username, password } = userInfo;
+			const { data } = await axios.post(registerRoute, {
+				username,
+				password,
+			});
+			if (data.status === false) {
+				toast.error(data.msg, toastStyle);
+			}
+			if (data.status === true) {
+				localStorage.setItem('user', JSON.stringify(data.user));
+				navigate('/');
+			}
+		}
+	};
 
 	const handleValidation = () => {
 		const { username, password, confirmedPassword } = userInfo;
