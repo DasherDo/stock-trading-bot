@@ -70,7 +70,7 @@ function Register() {
 	return (
 		<div className='sign-in'>
 			<form
-				//onSubmit={(e) => handleSubmit(e)}
+				onSubmit={(e) => handleSubmit(e)}
 				className='form'>
 				<input
 					type='text'

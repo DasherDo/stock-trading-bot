@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { formatMoney } from 'accounting';
 import Navbar from '../components/Navbar';
 import '../App.css';
 import Chart from '../components/Chart';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Portfolio() {
+	const navigate = useNavigate();
 	const [balance, setBalance] = useState(
 		localStorage.getItem('user-balance')
 			? localStorage.getItem('user-balance')
@@ -23,7 +25,7 @@ function Portfolio() {
 		setStocks(JSON.parse(localStorage.getItem('user-stocks')));
 	}, [balance]);
 
-	const getStocks = async () => {
+	const getStocks = useCallback(async () => {
 		const symbols = Object.keys(stocks);
 		const { data } = await axios.post(
 			'http://localhost:5000/stocks/search',
@@ -35,11 +37,17 @@ function Portfolio() {
 			console.log(data.data);
 			setStockCharts(data.data);
 		}
-	};
+	}, [stocks]);
+
+	useEffect(() => {
+		if (!localStorage.getItem('user')) {
+			navigate('/login');
+		}
+	}, [navigate]);
 
 	useEffect(() => {
 		getStocks();
-	}, []);
+	}, [getStocks]);
 
 	const listStocks = () => {
 		let list = [];
