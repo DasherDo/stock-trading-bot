@@ -68,7 +68,7 @@ function Register() {
 	};
 
 	return (
-		<div className='register'>
+		<div className='sign-in'>
 			<form
 				//onSubmit={(e) => handleSubmit(e)}
 				className='form'>

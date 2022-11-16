@@ -118,7 +118,7 @@ body {
 	grid-template-rows: 420px 420px;
 }
 
-.login {
+.sign-in {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -126,7 +126,7 @@ body {
 	height: 100vh;
 }
 
-.login > .form {
+.sign-in > .form {
 	display: flex;
 	flex-direction: column;
 }

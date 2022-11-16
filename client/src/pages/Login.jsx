@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import '../App.css';
+import { loginRoute } from '../utils/apiRoutes';
 
 function Login() {
 	const navigate = useNavigate();
@@ -22,30 +23,30 @@ function Login() {
 		draggable: true,
 	};
 	// Need to add database and user verification to backend
-	// useEffect(() => {
-	// 	if (localStorage.getItem('user')) {
-	// 		navigate('/');
-	// 	}
-	// }, [navigate]);
+	useEffect(() => {
+		if (localStorage.getItem('user')) {
+			navigate('/');
+		}
+	}, [navigate]);
 
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	if (handleValidation()) {
-	// 		const { username, password } = userInfo;
-	// 		const { data } = await axios.post(loginRoute, {
-	// 			username,
-	// 			password,
-	// 		});
-	// 		if (data.status === false) {
-	// 			toast.error(data.msg, toastStyle);
-	// 		}
-	// 		if (data.status === true) {
-	// 			console.log('Login successful');
-	// 			localStorage.setItem('user', JSON.stringify(data.user));
-	// 			navigate('/');
-	// 		}
-	// 	}
-	// };
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (handleValidation()) {
+			const { username, password } = userInfo;
+			const { data } = await axios.post(loginRoute, {
+				username,
+				password,
+			});
+			if (data.status === false) {
+				toast.error(data.msg, toastStyle);
+			}
+			if (data.status === true) {
+				console.log('Login successful');
+				localStorage.setItem('user', JSON.stringify(data.user));
+				navigate('/');
+			}
+		}
+	};
 
 	const handleValidation = () => {
 		const { username, password } = userInfo;
@@ -65,9 +66,9 @@ function Login() {
 	};
 
 	return (
-		<div className='login'>
+		<div className='sign-in'>
 			<form
-				//onSubmit={(e) => handleSubmit(e)}
+				onSubmit={(e) => handleSubmit(e)}
 				className='form'>
 				<input
 					type='text'
