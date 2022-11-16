@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import { formatMoney } from 'accounting';
 
-function Navbar({ balance }) {
+function Navbar({ balance, user }) {
 	return (
 		<div className='link'>
+			Hello {user}
 			<Link to='/'>Home</Link>
 			<Link
 				to='/search'

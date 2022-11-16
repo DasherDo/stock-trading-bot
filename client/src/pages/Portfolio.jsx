@@ -19,6 +19,7 @@ function Portfolio() {
 			: []
 	);
 	const [stockCharts, setStockCharts] = useState();
+	const [user, setUser] = useState();
 
 	useEffect(() => {
 		localStorage.setItem('user-balance', balance);
@@ -43,6 +44,7 @@ function Portfolio() {
 		if (!localStorage.getItem('user')) {
 			navigate('/login');
 		}
+		setUser(JSON.parse(localStorage.getItem('user')));
 	}, [navigate]);
 
 	useEffect(() => {
