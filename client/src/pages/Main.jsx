@@ -1,11 +1,19 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { balRoute } from '../utils/apiRoutes';
 
 function Main() {
+	const navigate = useNavigate();
+	const [user, setUser] = useState(
+		JSON.parse(localStorage.getItem('user'))
+			? localStorage.getItem('user')
+			: ''
+	);
+
 	const [stocks, setStocks] = useState(
 		sessionStorage.getItem('main-stocks')
 			? JSON.parse(sessionStorage.getItem('main-stocks'))
@@ -28,10 +36,15 @@ function Main() {
 		getData();
 	}, []);
 
+	useEffect(() => {
+		setUser(JSON.parse(localStorage.getItem('user')));
+	}, [navigate]);
+
 	return (
 		<div className='App'>
 			<Navbar
-				balance={JSON.parse(localStorage.getItem('user-balance'))}
+				balance={user?.['balance']}
+				user={user?.['username']}
 			/>
 			<div className='stock-container'>
 				{stocks ? (

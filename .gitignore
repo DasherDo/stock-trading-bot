@@ -25,6 +25,12 @@
 */server/package-lock
 package-lock.json
 
+/utils
+~/utils
+/apiRoutes.js
+
+*.md
+
 
 # Logs
 logs

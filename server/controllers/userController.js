@@ -38,3 +38,15 @@ module.exports.login = async (req, res, next) => {
 	console.log('Login successful');
 	return res.json({ msg: 'Login successful', status: true, user });
 };
+
+module.exports.user_balance = async (req, res) => {
+	try {
+		await User.find({ id: { $ne: req.params.id } })
+			.select('balance')
+			.exec((err, results) => {
+				return res.json(results);
+			});
+	} catch (err) {
+		next(err);
+	}
+};

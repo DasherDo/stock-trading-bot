@@ -8,18 +8,14 @@ import { useNavigate } from 'react-router-dom';
 
 function Portfolio() {
 	const navigate = useNavigate();
-	const [balance, setBalance] = useState(
-		localStorage.getItem('user-balance')
-			? localStorage.getItem('user-balance')
-			: 0
-	);
-	const [stocks, setStocks] = useState(
-		localStorage.getItem('user-stocks')
-			? JSON.parse(localStorage.getItem('user-stocks'))
-			: []
-	);
+	const [stocks, setStocks] = useState('');
 	const [stockCharts, setStockCharts] = useState();
-	const [user, setUser] = useState();
+	const [user, setUser] = useState(
+		JSON.parse(localStorage.getItem('user'))
+			? localStorage.getItem('user')
+			: ''
+	);
+	const [balance, setBalance] = useState();
 
 	useEffect(() => {
 		localStorage.setItem('user-balance', balance);
@@ -49,7 +45,7 @@ function Portfolio() {
 
 	useEffect(() => {
 		getStocks();
-	}, [getStocks]);
+	}, []);
 
 	const listStocks = () => {
 		let list = [];
@@ -69,7 +65,10 @@ function Portfolio() {
 
 	return (
 		<div>
-			<Navbar balance={balance} user={user}/>
+			<Navbar
+				balance={user?.['balance']}
+				user={user?.['username']}
+			/>
 			<button
 				onClick={() => {
 					setBalance(!balance ? 500 : parseInt(balance) + 500);

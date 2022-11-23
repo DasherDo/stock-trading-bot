@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
 import '../App.css';
 
 function Search() {
+	const navigate = useNavigate();
 	const [stock, setStock] = useState();
+	const [user, setUser] = useState(
+		JSON.parse(localStorage.getItem('user'))
+			? localStorage.getItem('user')
+			: ''
+	);
+	const [balance, setBalance] = useState(0);
 	const searchSymbol = useLocation().state?.searchSymbol;
 	const [symbol, setSymbol] = useState(searchSymbol ? searchSymbol : '');
-	const [balance, setBalance] = useState(
-		localStorage.getItem('user-balance')
-	);
 	const [ownedStocks, setOwnedStocks] = useState(
 		localStorage.getItem('user-stocks')
 			? JSON.parse(localStorage.getItem('user-stocks'))
@@ -22,6 +26,14 @@ function Search() {
 			? JSON.parse(sessionStorage.getItem('main-stocks'))
 			: null
 	);
+
+	useEffect(() => {
+		setUser(JSON.parse(localStorage.getItem('user')));
+	}, [navigate]);
+
+	useEffect(() => {
+		setBalance(user['balance']);
+	}, [balance]);
 
 	const getStock = async (e) => {
 		if (e) {
@@ -51,10 +63,6 @@ function Search() {
 			getStock();
 		}
 	}, []);
-
-	useEffect(() => {
-		localStorage.setItem('user-balance', balance);
-	}, [balance]);
 
 	const buyStock = () => {
 		const currentdate = new Date();
@@ -108,9 +116,16 @@ function Search() {
 		}
 	};
 
+	const test = () => {
+		console.log(user?.['balance']);
+	};
+
 	return (
 		<div>
-			<Navbar balance={balance} />
+			<Navbar
+				balance={user?.['balance']}
+				user={user?.['username']}
+			/>
 			<div className='search'>
 				<form
 					onSubmit={(e) => getStock(e)}
