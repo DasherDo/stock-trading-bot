@@ -4,11 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const mongoose = require('mongoose');
 
 var stockRouter = require('./routes/stocks');
-let userRouter = require('./router/userRoutes');
+let userRouter = require('./routes/userRoutes');
 
 var app = express();
+
+const URI = process.env.MONGO_URL;
 
 app.use(logger('dev'));
 app.use(cors());
@@ -39,5 +42,15 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.json({ error: err });
 });
+
+mongoose
+	.connect(URI, {
+		useUnifiedTopology: true,
+		useNewUrlParser: true,
+	})
+	.then(() => console.log('DB Connection Successful'))
+	.catch((err) => {
+		console.log(`Database Connection Error: ${err}`);
+	});
 
 module.exports = app;

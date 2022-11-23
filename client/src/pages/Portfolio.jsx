@@ -69,7 +69,7 @@ function Portfolio() {
 
 	return (
 		<div>
-			<Navbar balance={balance} />
+			<Navbar balance={balance} user={user}/>
 			<button
 				onClick={() => {
 					setBalance(!balance ? 500 : parseInt(balance) + 500);
