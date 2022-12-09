@@ -4,7 +4,6 @@ import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { balRoute } from '../utils/apiRoutes';
 
 function Main() {
 	const navigate = useNavigate();

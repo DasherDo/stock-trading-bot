@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { buyRoute, sellRoute, userRoute } from '../utils/apiRoutes';
+import { formatMoney } from 'accounting';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import Navbar from '../components/Navbar';
@@ -13,7 +15,6 @@ function Search() {
 			? localStorage.getItem('user')
 			: ''
 	);
-	const [balance, setBalance] = useState(0);
 	const searchSymbol = useLocation().state?.searchSymbol;
 	const [symbol, setSymbol] = useState(searchSymbol ? searchSymbol : '');
 	const [ownedStocks, setOwnedStocks] = useState(
@@ -21,19 +22,17 @@ function Search() {
 			? JSON.parse(localStorage.getItem('user-stocks'))
 			: {}
 	);
-	const [stocks, setStocks] = useState(
-		sessionStorage.getItem('main-stocks')
-			? JSON.parse(sessionStorage.getItem('main-stocks'))
-			: null
-	);
+
+	// Updates user state with new balance and stock array when buying or selling
+	const updateUser = async () => {
+		const { data } = await axios.post(`${userRoute}/${user._id}`);
+		setUser(data[0]);
+		localStorage.setItem('user', JSON.stringify(data[0]));
+	};
 
 	useEffect(() => {
-		setUser(JSON.parse(localStorage.getItem('user')));
+		updateUser();
 	}, [navigate]);
-
-	useEffect(() => {
-		setBalance(user['balance']);
-	}, [balance]);
 
 	const getStock = async (e) => {
 		if (e) {
@@ -54,16 +53,6 @@ function Search() {
 
 	// Need to memoize stock charts in search
 
-	useEffect(() => {
-		if (searchSymbol) {
-			if (searchSymbol in stocks) {
-				setStock(stocks[searchSymbol]);
-			}
-
-			getStock();
-		}
-	}, []);
-
 	const buyStock = () => {
 		const currentdate = new Date();
 		const datetime =
@@ -79,45 +68,36 @@ function Search() {
 			currentdate.getMinutes() +
 			':' +
 			currentdate.getSeconds();
-		if (balance > parseFloat(stock.price)) {
-			setBalance(
-				parseFloat(
-					(parseFloat(balance) - parseFloat(stock.price)).toFixed(2)
-				)
-			);
-			let stocks = ownedStocks;
-			const stockInfo = { boughtPrice: stock.price, timestamp: datetime };
-			if (stock.symbol in stocks) {
-				stocks[stock.symbol].push(stockInfo);
-			} else {
-				stocks = { ...stocks, [stock.symbol]: [stockInfo] };
-			}
-			setOwnedStocks(stocks);
-			localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
+
+		// Check this in the backend
+		if (user.balance < parseFloat(stock.price)) {
+			alert('You do not have the required funds.');
+		}
+		const stockInfo = {
+			boughtPrice: stock.price,
+			timestamp: datetime,
+			symbol: stock.symbol,
+		};
+		try {
+			axios.post(`${buyRoute}/${user._id}`, stockInfo);
+		} catch (err) {
+			console.log(err);
 			return;
 		}
-		alert('You do not have the required funds.');
+		updateUser();
 	};
 
 	const sellStock = () => {
-		if (stock.symbol in ownedStocks) {
+		if (stock.symbol in user?.stocks) {
+			const stockInfo = { price: stock.price, symbol: stock.symbol };
 			ownedStocks[stock.symbol].pop(0);
 			if (ownedStocks[stock.symbol].length === 0) {
 				delete ownedStocks[stock.symbol];
 			}
-			setBalance(
-				parseFloat(
-					parseFloat(balance) + parseFloat(stock.price)
-				).toFixed(2)
-			);
-			localStorage.setItem('user-stocks', JSON.stringify(ownedStocks));
+			axios.post(`${sellRoute}/${user._id}`, stockInfo);
 		} else {
 			alert('You do not own any of this stock.');
 		}
-	};
-
-	const test = () => {
-		console.log(user?.['balance']);
 	};
 
 	return (
@@ -141,8 +121,7 @@ function Search() {
 			</div>
 			<button onClick={() => buyStock()}>Buy</button>
 			<button onClick={() => sellStock()}>Sell</button>
-			{balance}
-			<button onClick={() => test()}>Test</button>
+			{formatMoney(user?.balance, '$')}
 			{stock ? <Chart stock={stock} /> : <div></div>}
 		</div>
 	);

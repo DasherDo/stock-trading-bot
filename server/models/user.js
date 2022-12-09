@@ -6,7 +6,7 @@ const UserSchema = new Schema({
 	username: { type: String, required: true, maxlength: 100 },
 	password: { type: String, required: true, minlength: 3 },
 	balance: { type: Number, required: false },
-	ownedStocks: { type: [Stock], default: undefined },
+	ownedStocks: { type: Array, default: null },
 });
 
 UserSchema.virtual('url').get(() => {

@@ -31,7 +31,6 @@ function Portfolio() {
 			}
 		);
 		if (data.status === true) {
-			console.log(data.data);
 			setStockCharts(data.data);
 		}
 	}, [stocks]);

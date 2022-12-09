@@ -39,6 +39,22 @@ module.exports.login = async (req, res, next) => {
 	return res.json({ msg: 'Login successful', status: true, user });
 };
 
+module.exports.user_info = async (req, res) => {
+	console.log('working');
+	try {
+		await User.find({
+			id: { $ne: req.params.id },
+		})
+			.select('ownedStocks balance username')
+			.exec((err, results) => {
+				console.log(results);
+				return res.json(results);
+			});
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 module.exports.user_balance = async (req, res) => {
 	try {
 		await User.find({ id: { $ne: req.params.id } })
@@ -48,5 +64,45 @@ module.exports.user_balance = async (req, res) => {
 			});
 	} catch (err) {
 		next(err);
+	}
+};
+
+module.exports.buy_stock = async (req, res) => {
+	const { boughtPrice, timestamp, symbol } = req.body;
+	try {
+		// Updates the user balance and adds the stock
+		await User.updateOne(
+			{ id: { $ne: req.params.id } },
+			{
+				$inc: { balance: -boughtPrice },
+				$push: { ownedStocks: req.body },
+			},
+			function (err, doc) {
+				if (err) {
+					return new Error(err);
+				}
+				console.log('Balance updated');
+			}
+		);
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+module.exports.sell_stock = async (req, res) => {
+	const { cost } = req.body;
+	try {
+		await User.updateOne(
+			{ id: { $ne: req.params.id } },
+			{ $inc: { balance: cost } },
+			function (err, doc) {
+				if (err) {
+					return new Error(err);
+				}
+				console.log('Balance updated');
+			}
+		);
+	} catch (err) {
+		console.log(err);
 	}
 };
