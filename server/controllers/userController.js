@@ -47,7 +47,7 @@ module.exports.user_info = async (req, res) => {
 		})
 			.select('ownedStocks balance username')
 			.exec((err, results) => {
-				console.log(results);
+				console.log('user_info results', results);
 				return res.json(results);
 			});
 	} catch (err) {
@@ -67,12 +67,16 @@ module.exports.user_balance = async (req, res) => {
 	}
 };
 
+/* Setup ownedStocks like this: 
+[{ symbol: AAPL, owned : [{timestamp: mon, boughtPrice: 10$}]}, {symbol : TSLA, owned : [...]}]
+*/
+
 module.exports.buy_stock = async (req, res) => {
-	const { boughtPrice, timestamp, symbol } = req.body;
+	const { boughtPrice } = req.body;
 	try {
 		// Updates the user balance and adds the stock
 		await User.updateOne(
-			{ id: { $ne: req.params.id } },
+			{ id: { $eq: req.params.id } },
 			{
 				$inc: { balance: -boughtPrice },
 				$push: { ownedStocks: req.body },
@@ -90,11 +94,13 @@ module.exports.buy_stock = async (req, res) => {
 };
 
 module.exports.sell_stock = async (req, res) => {
-	const { cost } = req.body;
+	const { price, symbol } = req.body;
+	const ID = req.params.id;
 	try {
 		await User.updateOne(
-			{ id: { $ne: req.params.id } },
+			{ id: { $ne: ID } },
 			{ $inc: { balance: cost } },
+			{ $pull: { ownedStocks: { symbol: 'AAPL' } } },
 			function (err, doc) {
 				if (err) {
 					return new Error(err);

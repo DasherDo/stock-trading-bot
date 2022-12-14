@@ -23,7 +23,18 @@ function Search() {
 	const updateUser = async () => {
 		const { data } = await axios.post(`${userRoute}/${user._id}`);
 		setUser(data[0]);
-		setOwnedStocks(data[0]['ownedStocks']);
+
+		// Changes ownedStock structure from [{boughtPrice, symbol, timestamp} ... ] to {symbol: [{ boughtPrice, timestamp}, ... ] ... }
+		let stockData = data[0]['ownedStocks'];
+		let tmp = stockData.reduce((a, b) => {
+			if (a[b['symbol']]) {
+				a[b['symbol']].push({ price: b['boughtPrice'] });
+			} else {
+				a[b['symbol']] = [{ price: b['boughtPrice'] }];
+			}
+			return a;
+		}, {});
+		setOwnedStocks(tmp);
 		localStorage.setItem('user', JSON.stringify(data[0]));
 	};
 
@@ -86,16 +97,13 @@ function Search() {
 
 	// Update
 	const sellStock = () => {
-		if (stock.symbol in ownedStocks.symbol) {
+		if (stock.symbol in ownedStocks) {
 			const stockInfo = { price: stock.price, symbol: stock.symbol };
-			ownedStocks[stock.symbol].pop(0);
-			if (ownedStocks[stock.symbol].length === 0) {
-				delete ownedStocks[stock.symbol];
-			}
-			axios.post(`${sellRoute}/${user._id}`, stockInfo);
+			const { data } = axios.post(`${sellRoute}/${user._id}`, stockInfo);
 		} else {
 			alert('You do not own any of this stock.');
 		}
+		updateUser();
 	};
 
 	return (
