@@ -11,22 +11,19 @@ function Search() {
 	const navigate = useNavigate();
 	const [stock, setStock] = useState();
 	const [user, setUser] = useState(
-		JSON.parse(localStorage.getItem('user'))
-			? localStorage.getItem('user')
+		localStorage.getItem('user')
+			? JSON.parse(localStorage.getItem('user'))
 			: ''
 	);
 	const searchSymbol = useLocation().state?.searchSymbol;
 	const [symbol, setSymbol] = useState(searchSymbol ? searchSymbol : '');
-	const [ownedStocks, setOwnedStocks] = useState(
-		localStorage.getItem('user-stocks')
-			? JSON.parse(localStorage.getItem('user-stocks'))
-			: {}
-	);
+	const [ownedStocks, setOwnedStocks] = useState([]);
 
 	// Updates user state with new balance and stock array when buying or selling
 	const updateUser = async () => {
 		const { data } = await axios.post(`${userRoute}/${user._id}`);
 		setUser(data[0]);
+		setOwnedStocks(data[0]['ownedStocks']);
 		localStorage.setItem('user', JSON.stringify(data[0]));
 	};
 
@@ -87,8 +84,9 @@ function Search() {
 		updateUser();
 	};
 
+	// Update
 	const sellStock = () => {
-		if (stock.symbol in user?.stocks) {
+		if (stock.symbol in ownedStocks.symbol) {
 			const stockInfo = { price: stock.price, symbol: stock.symbol };
 			ownedStocks[stock.symbol].pop(0);
 			if (ownedStocks[stock.symbol].length === 0) {
@@ -121,6 +119,7 @@ function Search() {
 			</div>
 			<button onClick={() => buyStock()}>Buy</button>
 			<button onClick={() => sellStock()}>Sell</button>
+			<button onClick={() => console.log(ownedStocks)}>Test</button>
 			{formatMoney(user?.balance, '$')}
 			{stock ? <Chart stock={stock} /> : <div></div>}
 		</div>
