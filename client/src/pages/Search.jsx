@@ -96,12 +96,26 @@ function Search() {
 	};
 
 	// Update
-	const sellStock = () => {
-		if (stock.symbol in ownedStocks) {
-			const stockInfo = { price: stock.price, symbol: stock.symbol };
-			const { data } = axios.post(`${sellRoute}/${user._id}`, stockInfo);
+	// const sellStock = () => {
+	// 	if (stock.symbol in ownedStocks) {
+	// 		const stockInfo = { price: stock.price, symbol: stock.symbol };
+	// 		const { data } = axios.post(`${sellRoute}/${user._id}`, stockInfo);
+	// 	} else {
+	// 		alert('You do not own any of this stock.');
+	// 	}
+	// 	updateUser();
+	// };
+
+	const sellStock = async () => {
+		const stockInfo = { price: stock.price, symbol: stock.symbol };
+		const { data } = await axios.post(
+			`${sellRoute}/${user._id}`,
+			stockInfo
+		);
+		if (data.status === true) {
+			console.log('Success');
 		} else {
-			alert('You do not own any of this stock.');
+			console.log(data.msg);
 		}
 		updateUser();
 	};

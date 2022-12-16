@@ -47,7 +47,6 @@ module.exports.user_info = async (req, res) => {
 		})
 			.select('ownedStocks balance username')
 			.exec((err, results) => {
-				console.log('user_info results', results);
 				return res.json(results);
 			});
 	} catch (err) {
@@ -97,17 +96,41 @@ module.exports.sell_stock = async (req, res) => {
 	const { price, symbol } = req.body;
 	const ID = req.params.id;
 	try {
-		await User.updateOne(
-			{ id: { $ne: ID } },
-			{ $inc: { balance: cost } },
-			{ $pull: { ownedStocks: { symbol: 'AAPL' } } },
-			function (err, doc) {
-				if (err) {
-					return new Error(err);
-				}
-				console.log('Balance updated');
+		// Checks to see if the user owns the stock or not
+		let result = await User.findOne(
+			{
+				id: ID,
+				ownedStocks: { $elemMatch: { symbol: symbol } },
+			},
+			{
+				// $ only returns one subfield
+				'ownedStocks.$': 1,
 			}
 		);
+
+		// If the user owns the stock, remove one
+		if (result) {
+			const { symbol, boughtPrice, timestamp } = result.ownedStocks[0];
+			await User.updateOne(
+				{ id: ID },
+				{
+					$inc: { balance: price },
+					$pull: {
+						ownedStocks: {
+							timestamp: timestamp,
+						},
+					},
+				},
+				function (err, doc) {
+					if (err) {
+						return new Error(err);
+					}
+				}
+			);
+			return res.json({ status: true });
+		}
+		// If not, return a status of false
+		return res.json({ status: false, msg: 'You do not own this stock. ' });
 	} catch (err) {
 		console.log(err);
 	}
